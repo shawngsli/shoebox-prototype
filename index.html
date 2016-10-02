@@ -2,6 +2,9 @@
 <html>
     <head>
         <meta charset="utf-8">
+        
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">  
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script type="text/javascript">
         function createCanvas() {
@@ -22,17 +25,17 @@
     </head>
 
     <body>
-        請輸入牆壁大小：
-        <form id="wall-size">
-            <label for="wall-width">
-                寬：
-                <input id="wall-width" type="number" name="wall-width" placeholder="500" value="500">
-            </label>
-            <label for="wall-height">
-                高：
-                <input id="wall-height" type="number" name="wall-height" placeholder="500" value="500">
-            </label>
-            <button id="gen-wall-canvas" type="button">產生牆壁畫布</button>
+        <h3>請輸入牆壁大小：</h3>
+        <form id="wall-size" class="form-inline">
+            <div class="form-group">
+                <label for="wall-width">寬：</label>
+                <input id="wall-width" class="form-control" type="number" name="wall-width" placeholder="500" value="500">
+            </div>
+            <div class="form-group">
+                <label for="wall-height">高：</label>
+                <input id="wall-height" class="form-control" type="number" name="wall-height" placeholder="500" value="500">
+            </div>
+            <button id="gen-wall-canvas" class="btn btn-primary" type="button">產生牆壁畫布</button>
         </form>
         <canvas id="wall-canvas" class="hidden"></div>
     </body>
