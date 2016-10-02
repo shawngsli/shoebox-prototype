@@ -1,0 +1,8 @@
+canvas {
+    border: 1px solid black;
+    margin: 20px;    
+}
+
+canvas.hidden {
+    display: none;
+}

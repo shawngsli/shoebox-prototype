@@ -2,10 +2,38 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript">
+        function createCanvas() {
+            var wallCanvas = document.getElementById("wall-canvas");
+            wallCanvas.width = document.getElementById("wall-width").value;
+            wallCanvas.height = document.getElementById("wall-height").value;
+            wallCanvas.className = "";            
+        }        
+        function init( jQuery ) {
+            var genWallCanvas = document.getElementById("gen-wall-canvas");
+            genWallCanvas.addEventListener("click", createCanvas, false);
+        }
+        $(document).ready(init);
+
+        </script>
+        <link rel="stylesheet" href="shoebox-prototype.css">
         <title>Shoebox-prototype</title>
     </head>
 
     <body>
-        Hello World!
+        請輸入牆壁大小：
+        <form id="wall-size">
+            <label for="wall-width">
+                寬：
+                <input id="wall-width" type="number" name="wall-width" placeholder="500" value="500">
+            </label>
+            <label for="wall-height">
+                高：
+                <input id="wall-height" type="number" name="wall-height" placeholder="500" value="500">
+            </label>
+            <button id="gen-wall-canvas" type="button">產生牆壁畫布</button>
+        </form>
+        <canvas id="wall-canvas" class="hidden"></div>
     </body>
 </html>
