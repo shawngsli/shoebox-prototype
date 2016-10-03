@@ -34,10 +34,15 @@
 
 	    var wallBlocks = document.getElementsByClassName("wall-block"); 
 
-	    //[].foreach.call(wallBlocks, function (block) { 
-            //    block.addEventListener("dragstart", blockDragStart, false);
-	    //	block.addEventListener("dragend", blockDragEnd, false);
-	    //});
+	    [].foreach.call(wallBlocks, function (block) { 
+                block.addEventListener("dragstart", blockDragStart, false);
+	    	block.addEventListener("dragend", blockDragEnd, false);
+	    });
+
+            wallCanvas.addEventListener("dragenter", blockDragEnter, false);
+	    wallCanvas.addEventListener("dragover", blockDragOver, false);
+	    wallCanvas.addEventListener("dragleave", blockDragLeave, false);
+	    wallCanvas.addEventListener("drop", blockDrop, false);
 
 	}
 
@@ -62,9 +67,9 @@
             <button id="gen-wall-canvas" class="btn btn-primary" type="button">產生牆壁畫布</button>
         </form>
 	<div id="wall-blocks">
-            1x1 <img class="wall-block" id="block1x1" src="block1x1.png">
-	    1x2 <img class="wall-block" id="block1x2" src="block1x2.png">
-	    2x2 <img class="wall-block" id="block2x2" src="block2x2.png">
+            1x1 <img class="wall-block" id="block1x1" src="block1x1.png" draggable="true">
+	    1x2 <img class="wall-block" id="block1x2" src="block1x2.png" draggable="true">
+	    2x2 <img class="wall-block" id="block2x2" src="block2x2.png" draggable="true">
         </div>
         <div id="wall-canvas-container" class="hidden">
 	    <canvas id="wall-canvas" class=""</canvas>
