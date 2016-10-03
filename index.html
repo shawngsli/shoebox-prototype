@@ -6,17 +6,41 @@
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">  
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-        <script type="text/javascript">
-        function createCanvas() {
-            var wallCanvas = document.getElementById("wall-canvas");
-            wallCanvas.width = document.getElementById("wall-width").value;
-            wallCanvas.height = document.getElementById("wall-height").value;
-            wallCanvas.className = "";            
-        }        
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.5/fabric.min.js"></script>
+	<script type="text/javascript">
+                
         function init( jQuery ) {
-            var genWallCanvas = document.getElementById("gen-wall-canvas");
-            genWallCanvas.addEventListener("click", createCanvas, false);
-        }
+	    function createCanvas() {
+                //var wallCanvas = document.getElementById("wall-canvas");
+	        //wallCanvas.width = document.getElementById("wall-width").value;
+                //wallCanvas.height = document.getElementById("wall-height").value;
+                //wallCanvas.className = "";
+		
+		var wallCanvasContainer = document.getElementById("wall-canvas-container");
+	        wallCanvasContainer.className = "";   
+	        //var wallCanvasFabric = new fabric.Canvas("wall-canvas");
+                wallCanvasFabric.setWidth(document.getElementById("wall-width").value);
+                wallCanvasFabric.setHeight(document.getElementById("wall-height").value);	    
+	        wallCanvasFabric.renderAll();
+	    }
+
+	    var wallCanvas = document.getElementById("wall-canvas");
+
+	    var genWallCanvas = document.getElementById("gen-wall-canvas");
+	   
+	    genWallCanvas.addEventListener("click", createCanvas, false);
+
+            var wallCanvasFabric = new fabric.Canvas("wall-canvas");
+
+	    var wallBlocks = document.getElementsByClassName("wall-block"); 
+
+	    //[].foreach.call(wallBlocks, function (block) { 
+            //    block.addEventListener("dragstart", blockDragStart, false);
+	    //	block.addEventListener("dragend", blockDragEnd, false);
+	    //});
+
+	}
+
         $(document).ready(init);
 
         </script>
@@ -37,6 +61,13 @@
             </div>
             <button id="gen-wall-canvas" class="btn btn-primary" type="button">產生牆壁畫布</button>
         </form>
-        <canvas id="wall-canvas" class="hidden"></div>
+	<div id="wall-blocks">
+            1x1 <img class="wall-block" id="block1x1" src="block1x1.png">
+	    1x2 <img class="wall-block" id="block1x2" src="block1x2.png">
+	    2x2 <img class="wall-block" id="block2x2" src="block2x2.png">
+        </div>
+        <div id="wall-canvas-container" class="hidden">
+	    <canvas id="wall-canvas" class=""</canvas>
+	</div>
     </body>
 </html>
