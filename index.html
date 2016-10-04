@@ -21,7 +21,53 @@
 	        //var wallCanvasFabric = new fabric.Canvas("wall-canvas");
                 wallCanvasFabric.setWidth(document.getElementById("wall-width").value);
                 wallCanvasFabric.setHeight(document.getElementById("wall-height").value);	    
-	        wallCanvasFabric.renderAll();
+		wallCanvasFabric.renderAll();
+	    }
+
+            function blockDragStart(e) {
+		[].forEach.call(wallBlocks, function(block) {
+                    block.classList.remove("current-img-dragged");
+		});
+                this.classList.add("current-img-dragged");
+	    }
+
+	    function blockDragOver(e) {
+		e.preventDefault();
+                console.log("dragover");
+	    }
+
+	    function blockDragEnter(e) {
+	        console.log("dragenter");
+	    }
+
+	    function blockDragLeave(e) {
+	    }
+
+            function blockDrop(e) {
+	        var block = document.querySelector("img.current-img-dragged");
+
+                console.log(e.clientX);
+		console.log(e.clientY);
+
+
+                var canvasRect = wallCanvas.getBoundingClientRect();
+
+                console.log(canvasRect.left);
+		console.log(canvasRect.top);
+
+                var dropX = e.clientX - canvasRect.left;
+                var dropY = e.clientY - canvasRect.top;
+
+		var newImage = new fabric.Image(block, {
+	            width: block.width,
+		    height: block.height,
+		    left: dropX,
+		    top: dropY
+		});
+                wallCanvasFabric.add(newImage);
+	    }
+
+            function blockDragEnd(event) {
 	    }
 
 	    var wallCanvas = document.getElementById("wall-canvas");
@@ -32,17 +78,19 @@
 
             var wallCanvasFabric = new fabric.Canvas("wall-canvas");
 
+            var wallCanvasContainer = document.getElementById("wall-canvas-container");
+
 	    var wallBlocks = document.getElementsByClassName("wall-block"); 
 
-	    [].foreach.call(wallBlocks, function (block) { 
+	    [].forEach.call(wallBlocks, function (block) { 
                 block.addEventListener("dragstart", blockDragStart, false);
 	    	block.addEventListener("dragend", blockDragEnd, false);
 	    });
 
-            wallCanvas.addEventListener("dragenter", blockDragEnter, false);
-	    wallCanvas.addEventListener("dragover", blockDragOver, false);
-	    wallCanvas.addEventListener("dragleave", blockDragLeave, false);
-	    wallCanvas.addEventListener("drop", blockDrop, false);
+            wallCanvasContainer.addEventListener("dragenter", blockDragEnter, false);
+	    wallCanvasContainer.addEventListener("dragover", blockDragOver, false);
+	    wallCanvasContainer.addEventListener("dragleave", blockDragLeave, false);
+	    wallCanvasContainer.addEventListener("drop", blockDrop, false);
 
 	}
 
