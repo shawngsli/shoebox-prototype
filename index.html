@@ -11,10 +11,6 @@
                 
         function init( jQuery ) {
 	    function createCanvas() {
-                //var wallCanvas = document.getElementById("wall-canvas");
-	        //wallCanvas.width = document.getElementById("wall-width").value;
-                //wallCanvas.height = document.getElementById("wall-height").value;
-                //wallCanvas.className = "";
 		
 		var wallCanvasContainer = document.getElementById("wall-canvas-container");
 	        wallCanvasContainer.className = "";   
@@ -42,6 +38,10 @@
 		    dragImage.src = "block2x2.png";
 		}
 		e.dataTransfer.setDragImage(dragImage, this.offsetWidth / 2, this.offsetHeight / 2);
+	    }
+
+            function blockDrag(e) {
+	       
 	    }
 
 	    function blockDragOver(e) {
@@ -97,7 +97,8 @@
 	            width: block.width,
 		    height: block.height,
 		    left: dropX,
-		    top: dropY
+		    top: dropY,
+		    hasControls: false
 		});
                 wallCanvasFabric.add(newImage);
 	    }
@@ -120,6 +121,7 @@
 	    [].forEach.call(wallBlocks, function (block) { 
                 block.addEventListener("dragstart", blockDragStart, false);
 	    	block.addEventListener("dragend", blockDragEnd, false);
+	        block.addEventListener("drag", blockDrag, false);	
 	    });
 
             wallCanvasContainer.addEventListener("dragenter", blockDragEnter, false);
