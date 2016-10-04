@@ -11,10 +11,6 @@ img {
     margin-right: 50px;
 }
 
-.canvas-container {
-    border: 1px solid black;
-}
-
 .hidden {
     display: none;
 }
@@ -22,4 +18,5 @@ img {
 #wall-canvas-container {
     display: inline-block;
     margin: 20px;
+    border: 1px solid black;
 }

@@ -29,6 +29,19 @@
                     block.classList.remove("current-img-dragged");
 		});
                 this.classList.add("current-img-dragged");
+
+                var dragImage = new Image();
+
+		if (this.id == "block1x1") {
+		    dragImage.src = "block1x1.png";
+		}
+		else if (this.id == "block1x2") {
+		    dragImage.src = "block1x2.png";
+		}
+		else if (this.id == "block2x2") {
+		    dragImage.src = "block2x2.png";
+		}
+		e.dataTransfer.setDragImage(dragImage, this.offsetWidth / 2, this.offsetHeight / 2);
 	    }
 
 	    function blockDragOver(e) {
@@ -46,17 +59,39 @@
             function blockDrop(e) {
 	        var block = document.querySelector("img.current-img-dragged");
 
-                console.log(e.clientX);
-		console.log(e.clientY);
+                //console.log(e.clientX);
+		//console.log(e.clientY);
 
 
                 var canvasRect = wallCanvas.getBoundingClientRect();
 
-                console.log(canvasRect.left);
-		console.log(canvasRect.top);
+                //console.log(canvasRect.left);
+		//console.log(canvasRect.top);
 
-                var dropX = e.clientX - canvasRect.left;
-                var dropY = e.clientY - canvasRect.top;
+                var dropX;
+		var dropY;
+
+		if (e.clientX - canvasRect.left < block.offsetWidth / 2) {
+	 	    dropX = 0;
+		} // deal with left border, let block snap in
+		else if (canvasRect.right - e.clientX < block.offsetWidth / 2) {
+		    dropX = wallCanvasContainer.offsetWidth - block.offsetWidth; 
+		} // deal with right border, let block snap in
+		else {
+		    dropX = e.clientX - block.offsetWidth / 2 - canvasRect.left;
+		}
+		if (e.clientY - canvasRect.top < block.offsetHeight / 2) {
+	            dropY = 0; 
+		} // deal with top border, let block snap in
+		else if (canvasRect.bottom - e.clientY < block.offsetHeight / 2) {
+		    dropY = wallCanvasContainer.offsetHeight - block.offsetHeight;
+		} // deal with bottom border, let block snap in
+		else {
+		    dropY = e.clientY - block.offsetHeight / 2 - canvasRect.top;
+		}
+		
+                //var dropX = e.clientX - canvasRect.left;
+                //var dropY = e.clientY - canvasRect.top;
 
 		var newImage = new fabric.Image(block, {
 	            width: block.width,
