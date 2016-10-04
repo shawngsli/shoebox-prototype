@@ -41,7 +41,34 @@
 	    }
 
             function blockDrag(e) {
-	       
+		var canvasRect = wallCanvas.getBoundingClientRect();
+
+                var block = document.querySelector("img.current-img-dragged");
+
+		var blockTop = e.clientY - block.offsetHeight / 2;
+	        var blockBottom = blockTop + block.offsetHeight;
+	        var blockLeft = e.clientX - block.offsetWidth / 2;	
+                var blockRight = blockLeft + block.offsetWidth;
+
+                var hasCollide = false;
+
+		wallCanvasFabric.forEachObject(function(element) {
+                    var imgTop = element.bound.top + canvasRect.top;
+                    var imgBottom = element.bound.top + element.bound.height + canvasRect.top;
+		    var imgLeft = element.bound.left + canvasRect.left;
+		    var imgRight = element.bound.left + element.bound.width + canvasRect.left;
+
+		    if (!(blockTop > imgBottom || blockBottom < imgTop || blockLeft > imgRight || blockRight < imgLeft)) {
+		        hasCollide = true;
+		    }
+	        });
+		if (hasCollide) {
+		    collide = true;
+		}
+		else {
+		    collide = false;
+		}
+		hasCollide = false;
 	    }
 
 	    function blockDragOver(e) {
@@ -89,22 +116,30 @@
 		else {
 		    dropY = e.clientY - block.offsetHeight / 2 - canvasRect.top;
 		}
-		
+
+                console.log(collide);
+
                 //var dropX = e.clientX - canvasRect.left;
                 //var dropY = e.clientY - canvasRect.top;
-
-		var newImage = new fabric.Image(block, {
-	            width: block.width,
-		    height: block.height,
-		    left: dropX,
-		    top: dropY,
-		    hasControls: false
+                if (collide == false) {
+		    var newImage = new fabric.Image(block, {
+	                width: block.width,
+		        height: block.height,
+		        left: dropX,
+		        top: dropY,
+		        hasControls: false
 		});
-                wallCanvasFabric.add(newImage);
+
+		newImage.bound = newImage.getBoundingRect();
+
+		wallCanvasFabric.add(newImage);
+		}
 	    }
 
             function blockDragEnd(event) {
 	    }
+
+            var collide = false;
 
 	    var wallCanvas = document.getElementById("wall-canvas");
 
