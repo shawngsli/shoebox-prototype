@@ -70,10 +70,10 @@
                 var hasCollide = false;
 
 		wallCanvasFabric.forEachObject(function(element) {
-                    var imgTop = element.bound.top + canvasRect.top;
-                    var imgBottom = element.bound.top + element.bound.height + canvasRect.top;
-		    var imgLeft = element.bound.left + canvasRect.left;
-		    var imgRight = element.bound.left + element.bound.width + canvasRect.left;
+                    var imgTop = element.getBoundingRect().top + canvasRect.top;
+                    var imgBottom = element.getBoundingRect().top + element.getBoundingRect().height + canvasRect.top;
+		    var imgLeft = element.getBoundingRect().left + canvasRect.left;
+		    var imgRight = element.getBoundingRect().left + element.getBoundingRect().width + canvasRect.left;
 
 		    if (!(blockTop > imgBottom || blockBottom < imgTop || blockLeft > imgRight || blockRight < imgLeft)) {
 		        hasCollide = true;
@@ -103,14 +103,7 @@
             function blockDrop(e) {
 	        var block = document.querySelector("img.current-img-dragged");
 
-                //console.log(e.clientX);
-		//console.log(e.clientY);
-
-
                 var canvasRect = wallCanvas.getBoundingClientRect();
-
-                //console.log(canvasRect.left);
-		//console.log(canvasRect.top);
 
                 var dropX;
 		var dropY;
@@ -147,8 +140,6 @@
 		        hasControls: false
 		});
 
-		newImage.bound = newImage.getBoundingRect();
-
 		wallCanvasFabric.add(newImage);
 		}
 	    }
@@ -181,6 +172,40 @@
 	    wallCanvasContainer.addEventListener("dragleave", blockDragLeave, false);
 	    wallCanvasContainer.addEventListener("drop", blockDrop, false);
 
+            wallCanvasFabric.on("object:moving", function(options) {
+                var curObj = options.target;
+                curObj.setCoords();
+                
+                if (curObj.getLeft() < 0) {
+                    curObj.setLeft(0);
+                }
+
+                if (curObj.getTop() < 0 ) {
+                    curObj.setTop(0);
+                }
+
+                if (curObj.getLeft() + curObj.getWidth() > wallCanvas.width) {
+                    curObj.setLeft(wallCanvas.width - curObj.getWidth());
+                }
+
+                if (curObj.getTop() + curObj.getHeight() > wallCanvas.height) {
+                    curObj.setTop(wallCanvas.height - curObj.getHeight());
+                }
+
+                wallCanvasFabric.forEachObject(function(obj) {
+                
+                    if (curObj == obj) {
+                        return;
+                    }
+
+                    //console.log(obj.left);
+                    //console.log(curObj.getBoundingRect().width);                  
+ 
+                    //if ((curObj.getBoundingRect().left + curObj.getBoundingRect().width > obj.getBoundingRect().left) && !((curObj.getBoundingRect().top >= obj.getBoundingRect().top + obj.getBoundingRect().height) || (curObj.getBoundingRect().top + curObj.getBoundingRect().height <= obj.getBoundingRect().top))) {
+                    //    curObj.left = obj.left - curObj.getBoundingRect().width;    
+                    //}
+                });
+            });
 	}
 
         $(document).ready(init);
