@@ -45,9 +45,26 @@
 
                 var block = document.querySelector("img.current-img-dragged");
 
-		var blockTop = e.clientY - block.offsetHeight / 2;
-	        var blockBottom = blockTop + block.offsetHeight;
-	        var blockLeft = e.clientX - block.offsetWidth / 2;	
+		if (e.clientX - canvasRect.left < block.offsetWidth / 2) {
+                    var blockLeft = canvasRect.left; 
+                }
+                else if (canvasRect.right - e.clientX < block.offsetWidth / 2) {
+                    var blockLeft = canvasRect.right - block.offsetWidth / 2;
+                }
+                else {
+	            var blockLeft = e.clientX - block.offsetWidth / 2;	
+                }
+
+                if (e.clientY - canvasRect.top < block.offsetHeight / 2) {
+                    var blockTop = canvasRect.top;
+                }
+                else if (canvasRect.bottom - e.clientY < block.offsetHeight / 2) {
+                    var blockTop = canvasRect.bottom - block.offsetWidth / 2;
+                }
+                else {
+                    var blockTop = e.clientY - block.offsetHeight / 2;
+	        }
+                var blockBottom = blockTop + block.offsetHeight;
                 var blockRight = blockLeft + block.offsetWidth;
 
                 var hasCollide = false;
