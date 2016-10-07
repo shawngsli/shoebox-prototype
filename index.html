@@ -183,13 +183,14 @@
                 if (curObj.getTop() < 0 ) {
                     curObj.setTop(0);
                 }
-
-                if (curObj.getLeft() + curObj.getWidth() > wallCanvas.width) {
-                    curObj.setLeft(wallCanvas.width - curObj.getWidth());
+		console.log(curObj.getLeft() + curObj.getWidth());
+		console.log(wallCanvasContainer.offsetWidth);
+                if (curObj.getLeft() + curObj.getWidth() > wallCanvasContainer.offsetWidth) {
+                    curObj.setLeft(wallCanvasContainer.offsetWidth - curObj.getWidth());
                 }
 
-                if (curObj.getTop() + curObj.getHeight() > wallCanvas.height) {
-                    curObj.setTop(wallCanvas.height - curObj.getHeight());
+                if (curObj.getTop() + curObj.getHeight() > wallCanvasContainer.offsetHeight) {
+                    curObj.setTop(wallCanvasContainer.offsetHeight - curObj.getHeight());
                 }
 
                 wallCanvasFabric.forEachObject(function(obj) {
