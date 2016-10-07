@@ -167,7 +167,6 @@
 		    if (distY > 0) {
                         if (obj.getLeft() + obj.getWidth() + curObj.getWidth() <= wallCanvasContainer.offsetWidth) {
 		            curObj.setLeft(obj.getLeft() + obj.getWidth());
-			    console.log("herehere");
 			    return;
 		        }	    
 		    } // curObj at obj's right
@@ -182,7 +181,6 @@
 		        curObj.setTop(obj.getTop() - curObj.getHeight());
 		    } // if out of bound and at top of obj
 		    else if (curObj.getTop() >= obj.getTop()) {
-			console.log("here");
 		        curObj.setTop(obj.getTop());
 		    } // if out of bound and at bottom of obj
 		} // curObj is closer to obj's X axis, thus should be at left or right side of obj	
@@ -258,14 +256,13 @@
 		    outerBoundBottom = null;
 		while (stillCollide == true) {
 		    wallCanvasFabric.forEachObject(function(obj){
-                        console.log(obj);
 	                var intersectArea = null, // overlap on happens when this value is greater than 0
 		            intersectWidth = null, // for calculate intersectArea
 		            itersectHeight = null, // for calculate intersectArea
 		            intersectLeft = null, 
 		            intersectRight = null,
 		            intersectTop = null,
-		    	intersectBottom = null;
+                            intersectBottom = null;
 
                         var curObjLeft = curObj.getLeft(),
 		        curObjRight = curObjLeft + curObj.getWidth(),
@@ -302,6 +299,16 @@
 		    	        intersectBottom = curObjBottom;
 		    	        intersectHeight = obj.getHeight() - (objBottom - curObjBottom);
 		    	    }
+			    if (objLeft >= curObjLeft && objRight <= curObjRight) {
+			        intersectLeft = objLeft;
+			        intersectRight = objRight;
+			        intersectWidth = intersectRight - intersectLeft;	
+			    } // if obj is contained in curObj
+			    if (objTop >= curObjTop && objBottom <= curObjBottom) {
+			        intersectTop = objTop;
+				intersectBottom = objBottom;
+				intersectHeight = intersectBottom - intersectTop;
+			    }
 
 		    	    if (intersectWidth > 0 && intersectHeight > 0) {
 		    	        intersectArea = intersectWidth * intersectHeight;
