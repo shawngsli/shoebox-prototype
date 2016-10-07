@@ -90,11 +90,9 @@
 
 	    function blockDragOver(e) {
 		e.preventDefault();
-                console.log("dragover");
 	    }
 
 	    function blockDragEnter(e) {
-	        console.log("dragenter");
 	    }
 
 	    function blockDragLeave(e) {
@@ -127,10 +125,6 @@
 		    dropY = e.clientY - block.offsetHeight / 2 - canvasRect.top;
 		}
 
-                console.log(collide);
-
-                //var dropX = e.clientX - canvasRect.left;
-                //var dropY = e.clientY - canvasRect.top;
                 if (collide == false) {
 		    var newImage = new fabric.Image(block, {
 	                width: block.width,
@@ -147,10 +141,28 @@
             function blockDragEnd(event) {
 	    }
 
+            function setObjPosition(distX, distY, curObj, obj) {
+		if (Math.abs(distX) > Math.abs(distY)) {
+		    console.log("here");	
+		    if (distX > 0) {
+		        curObj.setTop(obj.getTop() + obj.getHeight());
+		    } // curObj at obj's bottom
+		    else {
+			curObj.setTop(obj.getTop() - curObj.getHeight());
+		    } // curObj at obj's top
+		} // curObj is closer to obj's Y axis, thus should be at top or bottom side of obj
+		else {
+	            if (distY > 0) {
+		        curObj.setLeft(obj.getLeft() + obj.getWidth());
+		    } // curObj at obj's right
+		    else {
+			curObj.setLeft(obj.getLeft() - curObj.getWidth());
+		    } // curObj at obj's left
+		} // curObj is closer to obj's X axis, thus should be at left or right side of obj	
+	    }
+
             var collide = false;
-
 	    var wallCanvas = document.getElementById("wall-canvas");
-
 	    var genWallCanvas = document.getElementById("gen-wall-canvas");
 	   
 	    genWallCanvas.addEventListener("click", createCanvas, false);
@@ -178,33 +190,36 @@
                 
                 if (curObj.getLeft() < 0) {
                     curObj.setLeft(0);
-                }
+                } // blocks cannot be moved beyond canvas left border
 
                 if (curObj.getTop() < 0 ) {
                     curObj.setTop(0);
-                }
-		console.log(curObj.getLeft() + curObj.getWidth());
-		console.log(wallCanvasContainer.offsetWidth);
+		} // blocks cannot be moved beyond canvas top border
+
                 if (curObj.getLeft() + curObj.getWidth() > wallCanvasContainer.offsetWidth) {
                     curObj.setLeft(wallCanvasContainer.offsetWidth - curObj.getWidth());
-                }
+                } // blocks cannot be moved beyond canvas right border
 
                 if (curObj.getTop() + curObj.getHeight() > wallCanvasContainer.offsetHeight) {
                     curObj.setTop(wallCanvasContainer.offsetHeight - curObj.getHeight());
-                }
+                } // blocks cannot be moved beyond canvas bottom border 
 
                 wallCanvasFabric.forEachObject(function(obj) {
-                
                     if (curObj == obj) {
                         return;
                     }
+                    if (curObj.intersectsWithObject(obj) || curObj.isContainedWithinObject(obj) || obj.isContainedWithinObject(curObj)) {
+                        var xAxisObj = obj.getTop() + obj.getHeight() / 2;
+		        var xAxisCurObj = curObj.getTop() + curObj.getHeight() / 2;
+		        var yAxisObj = obj.getLeft() + obj.getWidth() / 2;
+		        var yAxisCurObj = curObj.getLeft() + curObj.getWidth() / 2;
+		        var distX = xAxisCurObj - xAxisObj;
+		        var distY = yAxisCurObj - yAxisObj;
+			console.log(distX);
+			console.log(distY);
+			setObjPosition(distX, distY, curObj, obj);
+		    }
 
-                    //console.log(obj.left);
-                    //console.log(curObj.getBoundingRect().width);                  
- 
-                    //if ((curObj.getBoundingRect().left + curObj.getBoundingRect().width > obj.getBoundingRect().left) && !((curObj.getBoundingRect().top >= obj.getBoundingRect().top + obj.getBoundingRect().height) || (curObj.getBoundingRect().top + curObj.getBoundingRect().height <= obj.getBoundingRect().top))) {
-                    //    curObj.left = obj.left - curObj.getBoundingRect().width;    
-                    //}
                 });
             });
 	}
