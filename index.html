@@ -147,21 +147,34 @@
 			if (obj.getTop() + obj.getHeight() + curObj.getHeight() <= wallCanvasContainer.offsetHeight) { 
 		            curObj.setTop(obj.getTop() + obj.getHeight());
 			    return;
-			} // set new top only when still within canvas boundary
-		    } // curObj at obj's bottom
+			} // set new position only when still within canvas boundary
+		    } // curObj at obj's bottom, set curObj to touch the bottom of obj
 		    else {
 			if (obj.getTop() - curObj.getHeight() >= 0) {
 			    curObj.setTop(obj.getTop() - curObj.getHeight());
 			    return;
-			}
-		    } // curObj at obj's top
+			} // set new position only when still within canvas boundary
+		    } // curObj at obj's top, set curObj to touch the top of obj
 		    // if curObj new position out of canvas bound
 		    if (curObj.getLeft() <= obj.getLeft()) {
-		        curObj.setLeft(obj.getLeft() - curObj.getWidth());
-		    } // if out of bound and at left of obj
+			if (obj.getLeft() - curObj.getWidth() >= 0) {    
+			    curObj.setLeft(obj.getLeft() - curObj.getWidth());
+			} // if new position at obj's left is not out of bound, move to new position
+			else {
+			    curObj.setLeft(obj.getLeft() + obj.getWidth());
+			} // if new position at obj's left is out of bound, move to obj's right
+		    } // if curObj current position is at left of obj
 		    else if (curObj.getLeft() >= obj.getLeft()) {
-			curObj.setLeft(obj.getLeft() - curObj.getWidth());
-		    } // if out of bound and at right of obj
+			if (obj.getLeft() + obj.getWidth() + curObj.getWidth <= wallCanvasContainer.offsetWidth) {
+		            curObj.setLeft(obj.getLeft() + obj.getWidth());
+		        }
+			else if (obj.getLeft() - curObj.getWidth() >= 0) {
+			    curObj.setLeft(obj.getLeft() - curObj.getWidth());
+			}
+			else {
+			    curObj.setLeft(obj.getLeft() + obj.getWidth());
+			}
+		    } // if curObj current position is at right of obj
 		} // curObj is closer to obj's Y axis, thus should be at top or bottom side of obj
 		else {
 		    if (distY > 0) {
@@ -178,10 +191,15 @@
 		    } // curObj at obj's left
                     // if curObj new position out of canvas bound
 		    if (curObj.getTop() <= obj.getTop()) {
-		        curObj.setTop(obj.getTop() - curObj.getHeight());
+			if (obj.getTop() - curObj.getHeight() >= 0) {    
+			    curObj.setTop(obj.getTop() - curObj.getHeight());
+			}
+			else {
+			    curObj.setTop(obj.getTop() + obj.getHeight());
+			}
 		    } // if out of bound and at top of obj
-		    else if (curObj.getTop() >= obj.getTop()) {
-		        curObj.setTop(obj.getTop());
+		    else if (curObj.getTop() >= obj.getTop()) { // need check
+			curObj.setTop(obj.getTop());
 		    } // if out of bound and at bottom of obj
 		} // curObj is closer to obj's X axis, thus should be at left or right side of obj	
 	    }
@@ -279,10 +297,10 @@
 
 		        if (curObj.intersectsWithObject(obj) || curObj.isContainedWithinObject(obj) || obj.isContainedWithinObject(curObj)) {
 				
-			    console.log("curObjLeft: ");
-                            console.log(curObjLeft);
-			    console.log("objLeft: ");
-		            console.log(objLeft);	    
+			    //console.log("curObjLeft: ");
+                            //console.log(curObjLeft);
+			    //console.log("objLeft: ");
+		            //console.log(objLeft);	    
 			    if (curObjLeft >= objLeft && curObjLeft <= objRight) {
                                 intersectLeft = curObjLeft;
 		    	        intersectWidth = obj.getWidth() - (curObjLeft - objLeft);
@@ -313,8 +331,8 @@
 		    	    if (intersectWidth > 0 && intersectHeight > 0) {
 		    	        intersectArea = intersectWidth * intersectHeight;
 		    	    }
-			    console.log(intersectWidth);
-			    console.log(intersectHeight);
+			    //console.log(intersectWidth);
+			    //console.log(intersectHeight);
                             if (objLeft < intersectLeft || outerBoundLeft == null) {
 		    	        outerBoundLeft = objLeft;
 		    	    }
@@ -335,14 +353,14 @@
 		    	        var yAxisCurObj = (curObjLeft + curObjRight) / 2;
 		    	        var distX = xAxisCurObj - xAxisOuterBound;
 				var distY = yAxisCurObj - yAxisOuterBound;
-				console.log(distX);
-				console.log(distY);
+				//console.log(distX);
+				//console.log(distY);
 		    	        setObjPosition(distX, distY, curObj, obj);
 				curObj.setCoords();
 			    }
 			}
 		    });	
-		    console.log(collideCount);
+		    //console.log(collideCount);
 			
 		    if (collideCount != 0) {
 		        stillCollide = true;
@@ -351,7 +369,7 @@
 		    else {
 		        stillCollide = false;
 		    }
-		    console.log(stillCollide);
+		    //console.log(stillCollide);
 	        };	    
 	    });
 	}
