@@ -165,14 +165,11 @@
 			} // if new position at obj's left is out of bound, move to obj's right
 		    } // if curObj current position is at left of obj
 		    else if (curObj.getLeft() >= obj.getLeft()) {
-			if (obj.getLeft() + obj.getWidth() + curObj.getWidth <= wallCanvasContainer.offsetWidth) {
+			if (obj.getLeft() + obj.getWidth() + curObj.getWidth() <= wallCanvasContainer.offsetWidth) {
 		            curObj.setLeft(obj.getLeft() + obj.getWidth());
 		        }
-			else if (obj.getLeft() - curObj.getWidth() >= 0) {
-			    curObj.setLeft(obj.getLeft() - curObj.getWidth());
-			}
 			else {
-			    curObj.setLeft(obj.getLeft() + obj.getWidth());
+			    curObj.setLeft(obj.getLeft() - curObj.getWidth());
 			}
 		    } // if curObj current position is at right of obj
 		} // curObj is closer to obj's Y axis, thus should be at top or bottom side of obj
@@ -198,9 +195,14 @@
 			    curObj.setTop(obj.getTop() + obj.getHeight());
 			}
 		    } // if out of bound and at top of obj
-		    else if (curObj.getTop() >= obj.getTop()) { // need check
-			curObj.setTop(obj.getTop());
-		    } // if out of bound and at bottom of obj
+		    else if (curObj.getTop() >= obj.getTop()) {
+			if (obj.getTop() + obj.getHeight() + curObj.getHeight() <= wallCanvasContainer.offsetHeight) {
+			    curObj.setTop(obj.getTop() + obj.getHeight());
+			}
+			else {
+			    curObj.setTop(obj.getTop() - curObj.getHeight());
+			}
+		    }
 		} // curObj is closer to obj's X axis, thus should be at left or right side of obj	
 	    }
 
