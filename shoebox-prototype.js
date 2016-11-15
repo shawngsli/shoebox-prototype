@@ -1,19 +1,15 @@
 function shoebox() {
-    function createCanvas() {
-	
-	var wallCanvasContainer = document.getElementById("wall-canvas-container");
-        wallCanvasContainer.className = "";   
-        //var wallCanvasFabric = new fabric.Canvas("wall-canvas");
-        wallCanvasFabric.setWidth(document.getElementById("wall-width").value);
-        wallCanvasFabric.setHeight(document.getElementById("wall-height").value);	    
+    function createCanvas(eventObj) {
+        $("#wall-canvas-container").removeClass("hidden");	
+        var wallCanvasFabric = eventObj.data
+        wallCanvasFabric.setWidth($("#wall-width").val());
+        wallCanvasFabric.setHeight($("#wall-height").val());	    
 	wallCanvasFabric.renderAll();
     }
 
-    function blockDragStart(e) {
-	[].forEach.call(wallBlocks, function(block) {
-            block.classList.remove("current-img-dragged");
-	});
-        this.classList.add("current-img-dragged");
+    function blockDragStart(eventObj) {
+        $(".wall-block").removeClass("current-img-dragged");
+        $(this).addClass("current-img-dragged");
 
         var dragImage = new Image();
 
@@ -26,7 +22,7 @@ function shoebox() {
 	else if (this.id == "block2x2") {
 	    dragImage.src = "block2x2.png";
 	}
-	e.dataTransfer.setDragImage(dragImage, this.offsetWidth / 2, this.offsetHeight / 2);
+	eventObj.dataTransfer.setDragImage(dragImage, this.offsetWidth / 2, this.offsetHeight / 2);
     }
 
     function blockDrag(e) {
@@ -56,7 +52,7 @@ function shoebox() {
         var blockBottom = blockTop + block.offsetHeight;
         var blockRight = blockLeft + block.offsetWidth;
 
-        var hasCollide = false;
+        hasCollide = false;
 
 	wallCanvasFabric.forEachObject(function(element) {
             var imgTop = element.getBoundingRect().top + canvasRect.top;
@@ -68,13 +64,6 @@ function shoebox() {
 	        hasCollide = true;
 	    }
         });
-	if (hasCollide) {
-	    collide = true;
-	}
-	else {
-	    collide = false;
-	}
-	hasCollide = false;
     }
 
     function blockDragOver(e) {
@@ -114,8 +103,8 @@ function shoebox() {
 	    dropY = e.clientY - block.offsetHeight / 2 - canvasRect.top;
 	}
 
-        if (collide == false) {
-	    var newImage = new fabric.Image(block, {
+	if (hasCollide == false) {
+            var newImage = new fabric.Image(block, {
                 width: block.width,
 	        height: block.height,
 	        left: dropX,
@@ -130,7 +119,7 @@ function shoebox() {
     function blockDragEnd(event) {
     }
 
-    function setObjPosition(distX, distY, curObj, obj) {
+    function setMovingObjPosition(distX, distY, curObj, obj) {
 	if (Math.abs(distX) > Math.abs(distY)) {
 	    if (distX > 0) {
 		if (obj.getTop() + obj.getHeight() + curObj.getHeight() <= wallCanvasContainer.offsetHeight) { 
@@ -195,32 +184,8 @@ function shoebox() {
 	} // curObj is closer to obj's X axis, thus should be at left or right side of obj	
     }
 
-    var collide = false;
-    var wallCanvas = document.getElementById("wall-canvas");
-    var genWallCanvas = document.getElementById("gen-wall-canvas");
-   
-    genWallCanvas.addEventListener("click", createCanvas, false);
-
-    var wallCanvasFabric = new fabric.Canvas("wall-canvas");
-
-    var wallCanvasContainer = document.getElementById("wall-canvas-container");
-
-    var wallBlocks = document.getElementsByClassName("wall-block"); 
-
-    [].forEach.call(wallBlocks, function (block) { 
-        block.addEventListener("dragstart", blockDragStart, false);
-    	block.addEventListener("dragend", blockDragEnd, false);
-        block.addEventListener("drag", blockDrag, false);	
-    });
-
-    wallCanvasContainer.addEventListener("dragenter", blockDragEnter, false);
-    wallCanvasContainer.addEventListener("dragover", blockDragOver, false);
-    wallCanvasContainer.addEventListener("dragleave", blockDragLeave, false);
-    wallCanvasContainer.addEventListener("drop", blockDrop, false);
-
-    wallCanvasFabric.on("object:moving", function(options) {
+    var movingObjPosition = function(options) {
         var curObj = options.target;
-        curObj.setCoords();
         
         if (curObj.getLeft() < 0) {
             curObj.setLeft(0);
@@ -238,23 +203,7 @@ function shoebox() {
             curObj.setTop(wallCanvasContainer.offsetHeight - curObj.getHeight());
         } // blocks cannot be moved beyond canvas bottom border 
 
-        wallCanvasFabric.forEachObject(function(obj) {
-            if (curObj == obj) {
-                return;
-            }
-            if (curObj.intersectsWithObject(obj) || curObj.isContainedWithinObject(obj) || obj.isContainedWithinObject(curObj)) {
-                var xAxisObj = obj.getTop() + obj.getHeight() / 2;
-	        var xAxisCurObj = curObj.getTop() + curObj.getHeight() / 2;
-	        var yAxisObj = obj.getLeft() + obj.getWidth() / 2;
-	        var yAxisCurObj = curObj.getLeft() + curObj.getWidth() / 2;
-	        var distX = xAxisCurObj - xAxisObj;
-	        var distY = yAxisCurObj - yAxisObj;
-		setObjPosition(distX, distY, curObj, obj);
-	    }
-	});
-        // if curObj still overlap with objs after first round reposition, apply the following:
-
-        curObj.setCoords();
+        curObj.setCoords(); // should be called after setting new curObj position
 
         var collideCount = 0;
         var stillCollide = true;
@@ -263,9 +212,10 @@ function shoebox() {
 	    outerBoundRight = null,
 	    outerBoundTop = null,
 	    outerBoundBottom = null;
+
 	while (stillCollide == true) {
 	    wallCanvasFabric.forEachObject(function(obj){
-                var intersectArea = null, // overlap on happens when this value is greater than 0
+                var intersectArea = null, // overlap happens when this value is greater than 0
 	            intersectWidth = null, // for calculate intersectArea
 	            itersectHeight = null, // for calculate intersectArea
 	            intersectLeft = null, 
@@ -273,14 +223,14 @@ function shoebox() {
 	            intersectTop = null,
                     intersectBottom = null;
 
-                var curObjLeft = curObj.getLeft(),
-	        curObjRight = curObjLeft + curObj.getWidth(),
-	        curObjTop = curObj.getTop(),
-	        curObjBottom = curObjTop + curObj.getHeight(),
-	        objLeft = obj.getLeft(),
-	        objRight = objLeft + obj.getWidth(),
-	        objTop = obj.getTop(),
-	        objBottom = objTop + obj.getHeight();
+                var curObjLeft   = curObj.getLeft(),
+	            curObjRight  = curObjLeft + curObj.getWidth(),
+	            curObjTop    = curObj.getTop(),
+	            curObjBottom = curObjTop + curObj.getHeight(),
+	            objLeft      = obj.getLeft(),
+	            objRight     = objLeft + obj.getWidth(),
+	            objTop       = obj.getTop(),
+	            objBottom    = objTop + obj.getHeight();
 	        
 	        if (curObj == obj) {
 	            return;
@@ -346,7 +296,7 @@ function shoebox() {
 			var distY = yAxisCurObj - yAxisOuterBound;
 			//console.log(distX);
 			//console.log(distY);
-	    	        setObjPosition(distX, distY, curObj, obj);
+	    	        setMovingObjPosition(distX, distY, curObj, obj);
 			curObj.setCoords();
 		    }
 		}
@@ -362,7 +312,40 @@ function shoebox() {
 	    }
 	    //console.log(stillCollide);
         };	    
+    };
+
+    var hasCollide = false;    
+
+    var wallCanvas = document.getElementById("wall-canvas");
+
+    var wallCanvasFabric = new fabric.Canvas("wall-canvas");
+
+    $("#gen-wall-canvas").on("click", wallCanvasFabric, createCanvas);
+
+    var wallCanvasContainer = document.getElementById("wall-canvas-container");
+
+    var wallBlocks = document.getElementsByClassName("wall-block"); 
+
+    [].forEach.call(wallBlocks, function (block) { 
+        block.addEventListener("dragstart", blockDragStart, false);
+    	block.addEventListener("dragend", blockDragEnd, false);
+        block.addEventListener("drag", blockDrag, false);	
     });
+
+    //$(".wall-block").on({
+    //    "dragstart": blockDragStart,
+    //    "dragend": blockDragEnd,
+    //    "drag": blockDrag
+    //});
+
+    $("#wall-canvas-container").on({
+        "dragenter": blockDragEnter,
+        "dragover": blockDragOver,
+        "dragleave": blockDragLeave,
+        "drop": blockDrop
+    });
+
+    wallCanvasFabric.on("object:moving", movingObjPosition);
 }
 
 $(document).ready(shoebox);
