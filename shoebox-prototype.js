@@ -211,6 +211,21 @@ function shoebox() {
 	        var yAxisCurObj = curObj.getLeft() + curObj.getWidth() / 2;
 	        var distX = xAxisCurObj - xAxisObj;
 	        var distY = yAxisCurObj - yAxisObj;
+
+                var isObj1x2 = (obj.getHeight() / obj.getWidth()) == 2;
+                var isCurObj1x2 = (curObj.getHeight() / curObj.getWidth()) == 2;
+
+                // if obj is 1x1
+                if ((obj.getHeight == 50 && isCurObj1x2) || (curObj.getHeight == 50 && isObj1x2)) {
+                    var ratioXY = 1.5;
+                }
+                else if (isObj1x2 || isCurObj1x2) {
+                    var ratioXY = 4 / 3;
+                }
+                else {
+                    var ratioXY = 1;
+                }
+                distX = distX / ratioXY;
 		setMovingObjPosition(distX, distY, curObj, obj);
 	    }
 	});
