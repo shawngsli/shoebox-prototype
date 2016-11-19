@@ -186,56 +186,65 @@ function shoebox() {
 
     var movingObjPosition = function(options) {
         var curObj = options.target;
+        curObj.setCoords();
         
         if (curObj.getLeft() < 0) {
             curObj.setLeft(0);
         } // blocks cannot be moved beyond canvas left border
-
         if (curObj.getTop() < 0 ) {
             curObj.setTop(0);
 	} // blocks cannot be moved beyond canvas top border
-
         if (curObj.getLeft() + curObj.getWidth() > wallCanvasContainer.offsetWidth) {
-            curObj.setLeft(wallCanvasContainer.offsetWidth - curObj.getWidth());
+            curObj.setLeft($("#wall-canvas-container").innerWidth() - curObj.getWidth());
         } // blocks cannot be moved beyond canvas right border
-
         if (curObj.getTop() + curObj.getHeight() > wallCanvasContainer.offsetHeight) {
-            curObj.setTop(wallCanvasContainer.offsetHeight - curObj.getHeight());
+            curObj.setTop($("#wall-canvas-container").innerHeight() - curObj.getHeight());
         } // blocks cannot be moved beyond canvas bottom border 
+        wallCanvasFabric.forEachObject(function(obj) {
+            if (curObj == obj) {
+                return;
+            }
+            if (curObj.intersectsWithObject(obj) || curObj.isContainedWithinObject(obj) || obj.isContainedWithinObject(curObj)) {
+                var xAxisObj = obj.getTop() + obj.getHeight() / 2;
+	        var xAxisCurObj = curObj.getTop() + curObj.getHeight() / 2;
+	        var yAxisObj = obj.getLeft() + obj.getWidth() / 2;
+	        var yAxisCurObj = curObj.getLeft() + curObj.getWidth() / 2;
+	        var distX = xAxisCurObj - xAxisObj;
+	        var distY = yAxisCurObj - yAxisObj;
+		setMovingObjPosition(distX, distY, curObj, obj);
+	    }
+	});
 
-        curObj.setCoords(); // should be called after setting new curObj position
+        // if curObj still overlap with objs after first round reposition, apply the following:
 
+        curObj.setCoords();
         var collideCount = 0;
         var stillCollide = true;
-
 	var outerBoundLeft = null,
 	    outerBoundRight = null,
 	    outerBoundTop = null,
 	    outerBoundBottom = null;
-
 	while (stillCollide == true) {
 	    wallCanvasFabric.forEachObject(function(obj){
-                var intersectArea = null, // overlap happens when this value is greater than 0
+	        var intersectArea = null, // overlap on happens when this value is greater than 0
 	            intersectWidth = null, // for calculate intersectArea
 	            itersectHeight = null, // for calculate intersectArea
 	            intersectLeft = null, 
 	            intersectRight = null,
 	            intersectTop = null,
                     intersectBottom = null;
-
-                var curObjLeft   = curObj.getLeft(),
-	            curObjRight  = curObjLeft + curObj.getWidth(),
-	            curObjTop    = curObj.getTop(),
-	            curObjBottom = curObjTop + curObj.getHeight(),
-	            objLeft      = obj.getLeft(),
-	            objRight     = objLeft + obj.getWidth(),
-	            objTop       = obj.getTop(),
-	            objBottom    = objTop + obj.getHeight();
+                var curObjLeft = curObj.getLeft(),
+	        curObjRight = curObjLeft + curObj.getWidth(),
+	        curObjTop = curObj.getTop(),
+	        curObjBottom = curObjTop + curObj.getHeight(),
+	        objLeft = obj.getLeft(),
+	        objRight = objLeft + obj.getWidth(),
+	        objTop = obj.getTop(),
+	        objBottom = objTop + obj.getHeight();
 	        
 	        if (curObj == obj) {
 	            return;
-                }
-
+	        }
 	        if (curObj.intersectsWithObject(obj) || curObj.isContainedWithinObject(obj) || obj.isContainedWithinObject(curObj)) {
 			
 		    //console.log("curObjLeft: ");
@@ -268,7 +277,6 @@ function shoebox() {
 			intersectBottom = objBottom;
 			intersectHeight = intersectBottom - intersectTop;
 		    }
-
 	    	    if (intersectWidth > 0 && intersectHeight > 0) {
 	    	        intersectArea = intersectWidth * intersectHeight;
 	    	    }
@@ -311,7 +319,7 @@ function shoebox() {
 	        stillCollide = false;
 	    }
 	    //console.log(stillCollide);
-        };	    
+	};	    
     };
 
     var hasCollide = false;    
