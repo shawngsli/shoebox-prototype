@@ -186,6 +186,9 @@ function shoebox() {
 
     var movingObjPosition = function(options) {
         var curObj = options.target;
+
+        var lastCollideObj = NULL;
+
         curObj.setCoords();
         
         if (curObj.getLeft() < 0) {
@@ -205,6 +208,7 @@ function shoebox() {
                 return;
             }
             if (curObj.intersectsWithObject(obj) || curObj.isContainedWithinObject(obj) || obj.isContainedWithinObject(curObj)) {
+                lastCollideObj = obj;
                 var xAxisObj = obj.getTop() + obj.getHeight() / 2;
 	        var xAxisCurObj = curObj.getTop() + curObj.getHeight() / 2;
 	        var yAxisObj = obj.getLeft() + obj.getWidth() / 2;
